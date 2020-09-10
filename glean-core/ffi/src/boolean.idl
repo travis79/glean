@@ -1,0 +1,16 @@
+namespace glean {};
+
+enum Lifetime {
+    "Ping",
+    "Application",
+    "User",
+};
+
+interface BooleanMetric {
+    constructor();
+    u64 glean_new_boolean_metric(string category, string name, sequence<string> send_in_pings, i32 send_in_pings_len, Lifetime lifetime, u8 disabled);
+    void glean_destroy_boolean_metric(u64 metric_id);
+    void glean_boolean_set(u64 metric_id, u8 value);
+    u8 glean_boolean_test_has_value(u64 metric_id, string storage_name);
+    u8 glean_boolean_test_get_value(u64 metric_id, string storage_name);
+};
