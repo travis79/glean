@@ -11,6 +11,7 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.StringArray
 import java.lang.reflect.Proxy
+import mozilla.telemetry.glean.BuildConfig
 import mozilla.telemetry.glean.config.FfiConfiguration
 import mozilla.telemetry.glean.net.FfiPingUploadTask
 
@@ -65,12 +66,33 @@ internal fun Pointer.getRustString(): String {
 @Suppress("TooManyFunctions")
 internal interface LibGleanFFI : Library {
     companion object {
-        private val JNA_LIBRARY_NAME = "glean_ffi"
-
         internal var INSTANCE: LibGleanFFI = try {
-            val lib = Native.load(JNA_LIBRARY_NAME, LibGleanFFI::class.java) as LibGleanFFI
-            lib.glean_enable_logging()
-            lib
+            // val lib = Native.load(JNA_LIBRARY_NAME, LibGleanFFI::class.java) as LibGleanFFI
+            // lib.glean_enable_logging()
+            // lib
+            var libName = BuildConfig.JNA_LIBRARY_NAME
+            val isBetterBuild = (libName == "betterbuild")
+            // If we are part of the BetterBuild, set a system property in order to
+            // be able to dynamically look up the library name.
+            // Ref: https://github.com/mozilla/application-services/blob/main/docs/design/megazords.md
+            if (isBetterBuild) {
+                val bbLibName = System.getProperty("mozilla.rustcomponents.betterbuild.library")
+                if (bbLibName != null) {
+                    val bbLibVersion = System.getProperty("mozilla.rustcomponents.betterbuild.version")
+                    if (bbLibVersion != BuildConfig.LIBRARY_VERSION) {
+                        throw AssertionError(
+                            "Expected BetterBuild $bbLibName version ${BuildConfig.LIBRARY_VERSION}, " +
+                            "but found $bbLibVersion"
+                        )
+                    }
+                    libName = bbLibName
+                }
+            }
+            val lib = Native.load(libName, LibGleanFFI::class.java) as LibGleanFFI
+            // If we are part of a BetterBuild, then logging will be initialized for us
+            if (!isBetterBuild) {
+                lib.glean_enable_logging()
+            }
         } catch (e: UnsatisfiedLinkError) {
             Proxy.newProxyInstance(
                 LibGleanFFI::class.java.classLoader,
