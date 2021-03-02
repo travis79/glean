@@ -90,9 +90,12 @@ internal interface LibGleanFFI : Library {
             }
             val lib = Native.load(libName, LibGleanFFI::class.java) as LibGleanFFI
             // If we are part of a BetterBuild, then logging will be initialized for us
-            if (!isBetterBuild) {
-                lib.glean_enable_logging()
+            when {
+                !isBetterBuild -> {
+                    lib.glean_enable_logging()
+                }
             }
+            lib
         } catch (e: UnsatisfiedLinkError) {
             Proxy.newProxyInstance(
                 LibGleanFFI::class.java.classLoader,
