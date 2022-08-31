@@ -32,7 +32,7 @@ fn serializer_should_correctly_serialize_timing_distribution() {
                 name: "distribution".into(),
                 category: "telemetry".into(),
                 send_in_pings: vec!["store1".into()],
-                disabled: false,
+                disabled: 0,
                 lifetime: Lifetime::Ping,
                 ..Default::default()
             },
@@ -86,7 +86,7 @@ fn set_value_properly_sets_the_value_in_all_stores() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: store_names.clone(),
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -129,7 +129,7 @@ fn timing_distributions_must_not_accumulate_negative_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -160,7 +160,7 @@ fn the_accumulate_samples_api_correctly_stores_timing_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -203,7 +203,7 @@ fn the_accumulate_samples_api_correctly_handles_negative_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -244,7 +244,7 @@ fn the_accumulate_samples_api_correctly_handles_overflowing_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -288,7 +288,7 @@ fn large_nanoseconds_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -319,7 +319,7 @@ fn stopping_non_existing_id_records_an_error() {
             name: "non_existing_id".into(),
             category: "test".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -345,7 +345,7 @@ fn the_accumulate_raw_samples_api_correctly_stores_timing_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -388,7 +388,7 @@ fn raw_samples_api_error_cases() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },

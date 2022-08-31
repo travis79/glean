@@ -30,7 +30,7 @@ fn serializer_should_correctly_serialize_memory_distribution() {
                 name: "distribution".into(),
                 category: "telemetry".into(),
                 send_in_pings: vec!["store1".into()],
-                disabled: false,
+                disabled: 0,
                 lifetime: Lifetime::Ping,
                 ..Default::default()
             },
@@ -79,7 +79,7 @@ fn set_value_properly_sets_the_value_in_all_stores() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: store_names.clone(),
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -120,7 +120,7 @@ fn the_accumulate_samples_api_correctly_stores_memory_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
@@ -160,7 +160,7 @@ fn the_accumulate_samples_api_correctly_handles_negative_values() {
             name: "distribution".into(),
             category: "telemetry".into(),
             send_in_pings: vec!["store1".into()],
-            disabled: false,
+            disabled: 0,
             lifetime: Lifetime::Ping,
             ..Default::default()
         },
