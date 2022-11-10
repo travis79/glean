@@ -1,7 +1,9 @@
+use std::cell::Cell;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
-use std::sync::atomic::AtomicU8;
+use std::sync::atomic::{AtomicU8, Ordering};
 
 use chrono::{DateTime, FixedOffset};
 use once_cell::sync::OnceCell;
@@ -11,7 +13,7 @@ use crate::debug::DebugOptions;
 use crate::event_database::EventDatabase;
 use crate::internal_metrics::{AdditionalMetrics, CoreMetrics, DatabaseMetrics};
 use crate::internal_pings::InternalPings;
-use crate::metrics::{self, ExperimentMetric, Metric, MetricType, PingType, RecordedExperiment};
+use crate::metrics::{self, ExperimentMetric, Metric, MetricType, PingType, RecordedExperiment, MetricsDisabledConfig};
 use crate::ping::PingMaker;
 use crate::storage::{StorageManager, INTERNAL_STORAGE};
 use crate::upload::{PingUploadManager, PingUploadTask, UploadResult, UploadTaskAction};
@@ -130,7 +132,7 @@ where
 ///
 /// In specific language bindings, this is usually wrapped in a singleton and all metric recording goes to a single instance of this object.
 /// In the Rust core, it is possible to create multiple instances, which is used in testing.
-#[derive(Debug)]
+// #[derive(Debug)]
 pub struct Glean {
     upload_enabled: bool,
     pub(crate) data_store: Option<Database>,
@@ -150,6 +152,7 @@ pub struct Glean {
     pub(crate) app_build: String,
     pub(crate) schedule_metrics_pings: bool,
     pub(crate) nimbus_epoch: AtomicU8,
+    pub(crate) nimbus_metrics_config: Cell<MetricsDisabledConfig>,
 }
 
 impl Glean {
@@ -203,6 +206,7 @@ impl Glean {
             // Subprocess doesn't use "metrics" pings so has no need for a scheduler.
             schedule_metrics_pings: false,
             nimbus_epoch: AtomicU8::new(0),
+            nimbus_metrics_config: Cell::new(MetricsDisabledConfig::new()),
         };
 
         // Ensuring these pings are registered.
@@ -698,6 +702,22 @@ impl Glean {
     pub fn test_get_experiment_data(&self, experiment_id: String) -> Option<RecordedExperiment> {
         let metric = ExperimentMetric::new(self, experiment_id);
         metric.test_get_value(self)
+    }
+
+    /// Set configuration for metrics' disabled property, typically from a Nimbus experiment
+    /// or rollout
+    ///
+    /// # Arguments
+    ///
+    /// * `json` - The stringified JSON representation of a MetricsDisabled object
+    pub fn set_metrics_disabled_config(&self, json: String) -> Result<()> {
+        // Set the current MetricsDisabled object
+        self.nimbus_metrics_config.replace(MetricsDisabledConfig::try_from(json)?);
+
+        //Update Nimbus epoch
+        self.nimbus_epoch.fetch_add(1, Ordering::SeqCst);
+
+        Ok(())
     }
 
     /// Persists [`Lifetime::Ping`] data that might be in memory in case

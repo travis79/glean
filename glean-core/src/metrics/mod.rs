@@ -34,6 +34,7 @@ mod timespan;
 mod timing_distribution;
 mod url;
 mod uuid;
+mod metrics_disabled_config;
 
 pub use crate::event_database::RecordedEvent;
 use crate::histogram::{Functional, Histogram, PrecomputedExponential, PrecomputedLinear};
@@ -67,6 +68,8 @@ pub use self::url::UrlMetric;
 pub use self::uuid::UuidMetric;
 pub use crate::histogram::HistogramType;
 pub use recorded_experiment::RecordedExperiment;
+
+pub use self::metrics_disabled_config::MetricsDisabledConfig;
 
 /// A snapshot of all buckets and the accumulated sum of a distribution.
 //
@@ -179,7 +182,7 @@ pub trait MetricType {
         // otherwise:
         // look up disabled for meta.base_identifier()
         let current_disabled = 1;
-        let new_disabled = (nimbus_epoch << 4) | current_disabled;
+        let _new_disabled = (nimbus_epoch << 4) | current_disabled;
         //self.meta.set_disabled(new_disabled)
         current_disabled == 0
     }

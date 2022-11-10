@@ -694,6 +694,13 @@ pub fn glean_test_get_experiment_data(experiment_id: String) -> Option<RecordedE
     core::with_glean(|glean| glean.test_get_experiment_data(experiment_id.to_owned()))
 }
 
+/// Indicate that an experiment is no longer running.
+///
+/// See [`core::Glean::set_metrics_disabled_config`].
+pub fn glean_set_metrics_disabled_config(json: String) {
+    launch_with_glean(|glean| { _ = glean.set_metrics_disabled_config(json); })
+}
+
 /// Sets a debug view tag.
 ///
 /// When the debug view tag is set, pings are sent with a `X-Debug-ID` header with the

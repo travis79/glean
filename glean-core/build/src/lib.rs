@@ -39,7 +39,7 @@ use std::env;
 
 use xshell_venv::{Result, Shell, VirtualEnv};
 
-const GLEAN_PARSER_VERSION: &str = "6.3.0";
+// const GLEAN_PARSER_VERSION: &str = "99.0.0";
 
 /// A Glean Rust bindings generator.
 pub struct Builder {
@@ -109,8 +109,9 @@ impl Builder {
         let sh = Shell::new()?;
         let venv = VirtualEnv::new(&sh, "py3-glean_parser")?;
 
-        let glean_parser = format!("glean_parser~={}", GLEAN_PARSER_VERSION);
-        venv.pip_install(&glean_parser)?;
+        // let glean_parser = format!("glean_parser~={}", GLEAN_PARSER_VERSION);
+        // venv.pip_install(&glean_parser)?;
+        venv.pip_install("git+https://github.com/travis79/glean_parser")?;
 
         for file in &self.files {
             println!("cargo:rerun-if-changed={}", file);
