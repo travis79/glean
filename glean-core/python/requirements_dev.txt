@@ -9,7 +9,7 @@ mypy==1.4.1
 pdoc3==0.10.0
 pip
 pytest-localserver==0.8.0
-MarkupSafe==2.0.1
+MarkupSafe==2.1.4
 pytest-runner==5.3.2
 pytest==7.0.1
 semver==2.13.0
