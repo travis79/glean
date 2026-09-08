@@ -1355,6 +1355,10 @@ pub fn glean_test_destroy_glean(clear_stores: bool, data_path: Option<String>) {
         // Allow us to go through initialization again.
         INITIALIZE_CALLED.store(false, Ordering::SeqCst);
     } else if clear_stores {
+        // Discard the pre-init queue, which still holds everything recorded so
+        // far and would be replayed by the next initialization (bug 2067862).
+        dispatcher::reset_dispatcher();
+
         if let Some(data_path) = data_path {
             let _ = std::fs::remove_dir_all(data_path).ok();
         } else {

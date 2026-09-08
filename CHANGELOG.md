@@ -2,6 +2,9 @@
 
 [Full changelog](https://github.com/mozilla/glean/compare/v70.0.0...main)
 
+* General
+  * BUGFIX: A test reset before Glean was initialized no longer replays recordings queued in the pre-init buffer into the store it just cleared ([bug 2067862](https://bugzilla.mozilla.org/show_bug.cgi?id=2067862))
+
 # v70.0.0 (2026-08-20)
 
 [Full changelog](https://github.com/mozilla/glean/compare/v69.0.0...v70.0.0)

@@ -127,11 +127,16 @@ pub fn shutdown() -> Result<(), DispatchError> {
 
 /// TEST ONLY FUNCTION.
 /// Resets the Glean state and triggers init again.
+///
+/// Tasks still waiting in the pre-init queue are discarded, not processed.
 pub fn reset_dispatcher() {
-    // We don't care about shutdown errors, since they will
-    // definitely happen if this is run concurrently.
-    // We will still replace the global dispatcher.
-    let _ = shutdown();
+    // `kill` discards the pre-init queue, which the next `initialize` would
+    // otherwise replay (bug 2067862). It no-ops once the queue is flushed, so
+    // fall back to `shutdown` to stop and join the worker thread. Errors are
+    // expected when run concurrently; we replace the dispatcher regardless.
+    if let Err(DispatchError::AlreadyFlushed) = kill() {
+        let _ = shutdown();
+    }
 
     // New dispatcher = we're queuing again.
     QUEUE_TASKS.store(true, Ordering::SeqCst);
